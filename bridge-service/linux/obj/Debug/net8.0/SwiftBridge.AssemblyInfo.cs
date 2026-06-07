@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SwiftBridge")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2b29eb7bc99b3603b2557ab3d956ddc94d01226c")]
 [assembly: System.Reflection.AssemblyProductAttribute("SwiftBridge")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SwiftBridge")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

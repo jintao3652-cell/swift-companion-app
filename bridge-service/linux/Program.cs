@@ -3,36 +3,39 @@ using SwiftBridge.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File("logs/bridge-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7)
+    .CreateLogger();
 
-// Validate critical configuration at startup
-var jwtSecret = builder.Configuration["Jwt:SecretKey"];
-var jwtIssuer = builder.Configuration["Jwt:Issuer"];
-var jwtAudience = builder.Configuration["Jwt:Audience"];
-
-if (string.IsNullOrEmpty(jwtSecret) || jwtSecret.Length < 32)
+try
 {
-    Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine("ERROR: Jwt:SecretKey must be at least 32 characters long!");
-    Console.WriteLine("Update appsettings.json before starting the bridge.");
-    Console.ResetColor();
-    Environment.Exit(1);
-}
+    Log.Information("Starting Swift Companion Bridge");
 
-if (string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
-{
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("WARNING: Jwt:Issuer or Jwt:Audience not configured!");
-    Console.ResetColor();
-}
+    var builder = WebApplication.CreateBuilder(args);
+    builder.Host.UseSerilog();
 
-builder.Logging.AddSimpleConsole(options =>
-{
-    options.TimestampFormat = "[yyyy-MM-ddTHH:mm:ss.fffZ] ";
-    options.UseUtcTimestamp = true;
-    options.SingleLine = true;
-});
+    // Validate critical configuration at startup
+    var jwtSecret = builder.Configuration["Jwt:SecretKey"];
+    var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+    var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+    if (string.IsNullOrEmpty(jwtSecret) || jwtSecret.Length < 32)
+    {
+        Log.Fatal("Jwt:SecretKey must be at least 32 characters long!");
+        return 1;
+    }
+
+    if (string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
+    {
+        Log.Warning("Jwt:Issuer or Jwt:Audience not configured!");
+    }
 
 var bridgePort = builder.Configuration["Port"] ?? "5000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{bridgePort}");
@@ -158,3 +161,14 @@ _ = Task.Run(async () =>
 });
 
 app.Run();
+return 0;
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+    return 1;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
