@@ -1,0 +1,38 @@
+# Build outputs
+bin/
+obj/
+build/
+*.exe
+*.dll
+*.pdb
+*.cache
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Flutter
+mobile-app/.dart_tool/
+mobile-app/build/
+mobile-app/.flutter-plugins
+mobile-app/.flutter-plugins-dependencies
+mobile-app/android/build/
+mobile-app/ios/build/
+mobile-app/.metadata
+
+# Secrets
+appsettings.Development.json
+*.pfx
+*.key
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.log
+*.tmp
+temp/
