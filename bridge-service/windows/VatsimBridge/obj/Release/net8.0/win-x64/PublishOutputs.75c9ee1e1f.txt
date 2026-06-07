@@ -1,0 +1,4 @@
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\publish\bridge\appsettings.json
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\publish\bridge\VatsimBridge.pdb
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\publish\bridge\aspnetcorev2_inprocess.dll
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\publish\bridge\VatsimBridge.exe

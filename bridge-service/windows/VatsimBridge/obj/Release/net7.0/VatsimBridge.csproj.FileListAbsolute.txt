@@ -1,0 +1,8 @@
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\VatsimBridge.csproj.AssemblyReference.cache
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\rpswa.dswa.cache.json
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\VatsimBridge.GeneratedMSBuildEditorConfig.editorconfig
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\VatsimBridge.AssemblyInfoInputs.cache
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\VatsimBridge.AssemblyInfo.cs
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\VatsimBridge.csproj.CoreCompileInputs.cache
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\VatsimBridge.MvcApplicationPartsAssemblyInfo.cs
+D:\HugoMoveData\User\16832\Desktop\AetherLink\vatsim-companion-app\bridge-service\windows\VatsimBridge\obj\Release\net7.0\VatsimBridge.MvcApplicationPartsAssemblyInfo.cache
