@@ -54,7 +54,7 @@ class _AircraftStatusScreenState extends ConsumerState<AircraftStatusScreen> {
     final connectionState = ref.watch(connectionProvider);
     final controllersState = ref.watch(controllersProvider);
 
-    final isConnected = connectionState.isConnected && connectionState.swiftConnected;
+    final isConnected = connectionState.isConnected && connectionState.vPilotConnected;
 
     return Scaffold(
       appBar: AppBar(
