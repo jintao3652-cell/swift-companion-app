@@ -71,7 +71,7 @@ class PushNotificationService {
     const androidDetails = AndroidNotificationDetails(
       'swift_companion',
       'Swift Companion',
-      channelDescription: 'VATSIM messages and notifications',
+      channelDescription: 'swift messages and notifications',
       importance: Importance.high,
       priority: Priority.high,
       showWhen: true,

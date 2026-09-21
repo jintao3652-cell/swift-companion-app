@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.vatsim_companion"
+    namespace = "com.jintao3652.swiftcompanion"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.vatsim_companion"
+        applicationId = "com.jintao3652.swiftcompanion"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

@@ -5,7 +5,6 @@ import '../models/aircraft_state.dart';
 
 class WebSocketService {
   HubConnection? _hubConnection;
-  String? _bridgeUrl;
   bool _isConnected = false;
 
   // Callbacks
@@ -18,8 +17,6 @@ class WebSocketService {
 
   Future<void> connect(String bridgeUrl, {String? token}) async {
     try {
-      _bridgeUrl = bridgeUrl;
-
       final httpConnectionOptions = HttpConnectionOptions(
         accessTokenFactory: token != null ? () async => token : null,
         // Cloudflare 免费隧道不稳定支持 WebSocket 长连接，强制走 Long Polling
@@ -29,7 +26,7 @@ class WebSocketService {
       );
 
       _hubConnection = HubConnectionBuilder()
-          .withUrl('$bridgeUrl/vatsimhub', options: httpConnectionOptions)
+          .withUrl('$bridgeUrl/swifthub', options: httpConnectionOptions)
           .withAutomaticReconnect()
           .build();
 

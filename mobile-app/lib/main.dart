@@ -1,11 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:async';
 import 'screens/pairing/pairing_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'config/theme.dart';
 import 'services/storage_service.dart';
 import 'services/push_notification_service.dart';
+import 'services/bridge_installer_service.dart';
 import 'providers/connection_provider.dart';
 import 'providers/message_provider.dart';
 
@@ -17,18 +20,18 @@ void main() async {
 
   runApp(
     const ProviderScope(
-      child: VatsimCompanionApp(),
+      child: SwiftCompanionApp(),
     ),
   );
 }
 
-class VatsimCompanionApp extends StatelessWidget {
-  const VatsimCompanionApp({Key? key}) : super(key: key);
+class SwiftCompanionApp extends StatelessWidget {
+  const SwiftCompanionApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'VATSIM Companion',
+      title: 'Swift Companion',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
@@ -70,6 +73,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
       // 短暂延迟以显示启动画面
       await Future.delayed(const Duration(seconds: 1));
+
+      // Windows 桌面端：自动安装并启动本机 Bridge（后台执行，不阻塞启动流程）
+      if (BridgeInstallerService.isSupported) {
+        unawaited(BridgeInstallerService.instance.autoStartIfNeeded().then((r) {
+          debugPrint('Bridge autoStart result: $r');
+        }));
+      }
 
       // 检查是否已配对
       final isPaired = await _storageService.getIsPaired();
@@ -137,7 +147,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'VATSIM Companion',
+              'Swift Companion',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 16),

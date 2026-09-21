@@ -1,12 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/controller_info.dart';
 
 class BridgeApiService {
   final Dio _dio;
-  String? _baseUrl;
-  String? _token;
 
   BridgeApiService() : _dio = Dio() {
     _dio.options.connectTimeout = const Duration(seconds: 10);
@@ -22,12 +19,10 @@ class BridgeApiService {
   }
 
   void setBaseUrl(String baseUrl) {
-    _baseUrl = baseUrl;
     _dio.options.baseUrl = baseUrl;
   }
 
   void setToken(String token) {
-    _token = token;
     _dio.options.headers['Authorization'] = 'Bearer $token';
   }
 
@@ -142,7 +137,7 @@ class BridgeApiService {
   // 获取飞机状态
   Future<Map<String, dynamic>> getAircraftState() async {
     try {
-      final response = await _dio.get('/api/aircraft/state');
+      final response = await _dio.get('/api/status/aircraft');
       return response.data as Map<String, dynamic>;
     } catch (e) {
       debugPrint('Error getting aircraft state: $e');
@@ -151,11 +146,14 @@ class BridgeApiService {
   }
 
   // 获取在线管制（周围管制列表）
-  Future<ControllersResponse> getOnlineControllers() async {
+  Future<List<dynamic>> getOnlineControllers() async {
     try {
-      final response = await _dio.get('/api/atc/online');
-      return ControllersResponse.fromJson(response.data as Map<String, dynamic>);
+      final response = await _dio.get('/api/status/atc');
+      return response.data as List<dynamic>;
     } catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        return [];
+      }
       debugPrint('Error getting online controllers: $e');
       rethrow;
     }
@@ -173,6 +171,21 @@ class BridgeApiService {
     } catch (e) {
       debugPrint('Error getting nearby aircraft: $e');
       rethrow;
+    }
+  }
+
+  // 获取范围内飞机（雷达数据，返回原始 List）
+  Future<List<dynamic>> getRadarAircraft({double? lat, double? lon, double? radiusNm}) async {
+    try {
+      final response = await _dio.get('/api/aircraft/nearby', queryParameters: {
+        if (lat != null) 'lat': lat,
+        if (lon != null) 'lon': lon,
+        if (radiusNm != null) 'radiusNm': radiusNm,
+      });
+      return response.data as List<dynamic>;
+    } catch (e) {
+      debugPrint('Error getting radar aircraft: $e');
+      return [];
     }
   }
 

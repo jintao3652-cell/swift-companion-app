@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
@@ -6,6 +7,7 @@ import '../../services/bridge_api_service.dart';
 import '../../services/storage_service.dart';
 import '../../services/push_notification_service.dart';
 import '../../providers/connection_provider.dart';
+import '../../services/bridge_installer_service.dart';
 import 'qr_scanner_screen.dart';
 
 class PairingScreen extends ConsumerStatefulWidget {
@@ -17,8 +19,11 @@ class PairingScreen extends ConsumerStatefulWidget {
 
 class _PairingScreenState extends ConsumerState<PairingScreen> {
   final TextEditingController _pairingCodeController = TextEditingController();
-  final TextEditingController _bridgeAddressController = TextEditingController(
-    text: '192.168.1.237:5000',
+  late final TextEditingController _bridgeAddressController =
+      TextEditingController(
+    text: BridgeInstallerService.isSupported
+        ? '127.0.0.1:${BridgeInstallerService.bridgePort}'
+        : '',
   );
   final StorageService _storageService = StorageService();
   final PushNotificationService _pushService = PushNotificationService();
@@ -52,6 +57,22 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
 
       if (pairingCode.length != 6) {
         throw Exception('Pairing code must be 6 digits');
+      }
+
+      // 手机上 localhost/127.0.0.1 指手机自身，必然连接失败 —— 提前拦截并给出正确指引
+      if (!BridgeInstallerService.isSupported) {
+        final host = bridgeAddress
+            .replaceAll(RegExp(r'^https?://'), '')
+            .split(':')
+            .first
+            .trim()
+            .toLowerCase();
+        if (host == 'localhost' || host == '127.0.0.1' || host == '::1' || host == '[::1]') {
+          throw Exception(
+              'On your phone, "localhost" means the phone itself — not your PC.\n\n'
+              'Please enter your PC\'s LAN IP instead (run "ipconfig" on the PC and use its IPv4 address, e.g. 192.168.1.100:${BridgeInstallerService.bridgePort}), '
+              'or tap "Scan QR Code" and scan the code shown by the PC app.');
+        }
       }
 
       // 1. 连接到 Bridge API
@@ -102,6 +123,10 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home');
       }
+    } on DioException catch (e) {
+      setState(() {
+        _errorMessage = _friendlyDioError(e);
+      });
     } catch (e) {
       setState(() {
         _errorMessage = e.toString().replaceAll('Exception: ', '');
@@ -110,6 +135,67 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  /// 把 Dio 连接错误翻译成用户能照着做的提示
+  String _friendlyDioError(DioException e) {
+    final port = BridgeInstallerService.bridgePort;
+
+    // Bridge 有响应：解析服务端返回的错误文案（如 "Invalid or expired pairing code"）
+    final resp = e.response;
+    if (resp != null) {
+      String? serverMsg;
+      final data = resp.data;
+      if (data is Map && data['error'] is String) {
+        serverMsg = data['error'] as String;
+      } else if (data is String) {
+        final m = RegExp(r'"error"\s*:\s*"([^"]+)"').firstMatch(data);
+        if (m != null) serverMsg = m.group(1);
+      }
+      final status = resp.statusCode ?? 0;
+      switch (status) {
+        case 400:
+        case 401:
+          return serverMsg != null
+              ? '$serverMsg.\n\n'
+                  'The pairing code is valid for 10 minutes and single-use. '
+                  'Check the CURRENT code shown in the PC Companion app '
+                  '(it changes every time the app restarts), then re-enter it '
+                  '— or just tap "Scan QR Code".'
+              : 'Invalid or expired pairing code.\n\n'
+                  'The code is valid for 10 minutes and single-use. '
+                  'Check the CURRENT code shown in the PC Companion app, '
+                  'then re-enter it — or just tap "Scan QR Code".';
+        case 404:
+          return 'Bridge endpoint not found (HTTP 404). '
+              'The address may point to a different app — '
+              'use the address/QR code shown in the PC Companion app.';
+        case >= 500:
+          return 'Tunnel or server unreachable (HTTP ${resp.statusCode}).\n\n'
+              'Cloudflare quick tunnels get a NEW address every time the PC app '
+              'restarts — the saved address is probably stale. Open the PC '
+              'Companion app and re-scan its QR code (or copy the current '
+              'Cloudflare URL). On the same Wi-Fi, the PC\'s LAN IP '
+              '(e.g. 192.168.1.100:$port) is more stable.';
+        default:
+          return 'Bridge returned HTTP ${resp.statusCode}'
+              '${serverMsg != null ? ': $serverMsg' : ''}.';
+      }
+    }
+
+    switch (e.type) {
+      case DioExceptionType.connectionError:
+      case DioExceptionType.connectionTimeout:
+        return 'Cannot reach the Bridge at "$_bridgeAddressController.text".\n\n'
+            'Please check:\n'
+            '1. The PC Companion app (SwiftCompanion) is running — it starts the Bridge automatically.\n'
+            '2. Your phone and the PC are on the same Wi-Fi network.\n'
+            '3. The address is the PC\'s LAN IP (run "ipconfig" on the PC, use its IPv4 address, e.g. 192.168.1.100:$port) — NOT localhost.\n'
+            'Or simply tap "Scan QR Code" and scan the code shown in the PC app.';
+      default:
+        return 'Bridge request failed: ${e.message ?? e.type.name}\n\n'
+            'Make sure the PC Companion app is running and the address is the PC\'s LAN IP (e.g. 192.168.1.100:$port).';
     }
   }
 
@@ -181,7 +267,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
                 controller: _bridgeAddressController,
                 decoration: const InputDecoration(
                   labelText: 'Bridge Address',
-                  hintText: '192.168.1.237:5000 or https://xxx.trycloudflare.com',
+                  hintText: 'PC LAN IP, e.g. 192.168.1.100:${BridgeInstallerService.bridgePort} (not localhost)',
                   prefixIcon: Icon(Icons.computer),
                 ),
                 keyboardType: TextInputType.url,

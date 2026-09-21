@@ -1,0 +1,75 @@
+<UserControl x:Class="SwiftCompanion.Desktop.Views.PairView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="34,28">
+        <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+            <TextBlock Text="{DynamicResource L.Pair.Title}" FontSize="26" FontWeight="Bold" Margin="0,0,0,2" />
+            <TextBlock Text="{DynamicResource L.Pair.Subtitle}"
+                       Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,0,0,22" />
+
+            <!-- ===== QR + code card ===== -->
+            <Border Style="{StaticResource Card}" Padding="26">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- QR in a white plate for scan contrast -->
+                    <Border Grid.Column="0" Width="190" Height="190" Background="White"
+                            CornerRadius="12" Padding="10">
+                        <Image Source="{Binding QrImage}" Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Margin="26,4,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{DynamicResource L.Pair.Code}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{StaticResource MutedBrush}" Margin="0,0,0,10" />
+                        <TextBlock Text="{Binding PairingCode}" FontSize="34" FontWeight="Bold"
+                                   FontFamily="Consolas" Foreground="{StaticResource AccentBrush}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                            <Button Content="{DynamicResource L.Btn.Regenerate}" Style="{StaticResource GhostButton}"
+                                    Command="{Binding GenerateCommand}" />
+                            <Button Content="{DynamicResource L.Btn.NewBridge}" Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding NewBridgeCommand}" Margin="12,0,0,0"
+                                    ToolTip="{DynamicResource L.Btn.NewBridge.Tip}" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding Hint}" Foreground="{StaticResource ErrBrush}"
+                                   FontSize="12" TextWrapping="Wrap" Margin="0,12,0,0" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ===== Cloudflare tunnel card ===== -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource L.Tunnel.Title}" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource MutedBrush}" Margin="0,0,0,10" />
+                    <TextBlock Text="{DynamicResource L.Tunnel.Desc}" Foreground="{StaticResource MutedBrush}"
+                               FontSize="13" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Grid.Column="0" Content="{DynamicResource L.Tunnel.Enable}"
+                                  IsChecked="{Binding TunnelEnabled}" Foreground="{StaticResource TextBrush}"
+                                  VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <Ellipse Width="9" Height="9" Fill="{Binding TunnelStatusColor}"
+                                     VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding TunnelStatus}" Margin="8,0,14,0"
+                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center" />
+                            <Button Content="{Binding CopyButtonText}" Style="{StaticResource GhostButton}"
+                                    Height="30" Padding="14,0" FontSize="12"
+                                    Command="{Binding CopyTunnelCommand}"
+                                    IsEnabled="{Binding CanCopyTunnel}" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

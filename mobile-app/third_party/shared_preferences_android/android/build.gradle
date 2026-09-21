@@ -1,0 +1,62 @@
+group = "io.flutter.plugins.sharedpreferences"
+version = "1.0-SNAPSHOT"
+
+// Groovy 转换版：原 build.gradle.kts 在本机触发 Gradle Kotlin DSL accessors 60s 超时。
+// AGP 降为 8.6.0 与主工程一致；测试依赖移除（仅参与 assembleRelease 不需要）。
+buildscript {
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/central" }
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.6.0"
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/central" }
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: "com.android.library"
+
+android {
+    namespace "io.flutter.plugins.sharedpreferences"
+    compileSdk flutter.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        minSdk 24
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    lint {
+        checkAllWarnings false
+        warningsAsErrors false
+        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
+    }
+}
+
+dependencies {
+    implementation "androidx.datastore:datastore:1.1.7"
+    implementation "androidx.datastore:datastore-preferences:1.1.7"
+    implementation "androidx.preference:preference:1.2.1"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add("-Xlint:deprecation")
+    options.compilerArgs.add("-Xlint:unchecked")
+}

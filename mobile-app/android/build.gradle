@@ -1,0 +1,39 @@
+allprojects {
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/central" }
+        google()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    buildscript {
+        repositories {
+            maven { url "https://maven.aliyun.com/repository/google" }
+            maven { url "https://maven.aliyun.com/repository/central" }
+            google()
+            mavenCentral()
+        }
+    }
+    // AGP 8.6.0 与 androidx 最新版（core 1.17+/browser 1.9+ 要求 AGP 8.9.1）不兼容，全局降级
+    configurations.all {
+        resolutionStrategy {
+            force "androidx.core:core:1.13.1"
+            force "androidx.core:core-ktx:1.13.1"
+            force "androidx.browser:browser:1.8.0"
+        }
+    }
+}
+
+def newBuildDir = rootProject.layout.buildDirectory.dir("../../build").get()
+rootProject.layout.buildDirectory.value(newBuildDir)
+
+subprojects {
+    def newSubprojectBuildDir = newBuildDir.dir(project.name)
+    project.layout.buildDirectory.value(newSubprojectBuildDir)
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
+}

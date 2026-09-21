@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../chat/chat_screen.dart';
 import '../status/aircraft_status_screen.dart';
+import '../radar/radar_screen.dart';
+import '../atc/atc_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,6 +17,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   final List<Widget> _screens = [
     const ChatScreen(),
+    const RadarScreen(),
+    const AtcScreen(),
     const AircraftStatusScreen(),
   ];
 
@@ -37,6 +41,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: Icon(Icons.chat_outlined),
             selectedIcon: Icon(Icons.chat),
             label: 'Messages',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.radar_outlined),
+            selectedIcon: Icon(Icons.radar),
+            label: 'Radar',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.cell_tower_outlined),
+            selectedIcon: Icon(Icons.cell_tower),
+            label: 'ATC',
           ),
           NavigationDestination(
             icon: Icon(Icons.flight_outlined),

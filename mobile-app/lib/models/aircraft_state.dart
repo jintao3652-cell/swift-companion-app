@@ -26,18 +26,20 @@ class AircraftState {
   });
 
   factory AircraftState.fromJson(Map<String, dynamic> json) {
+    // Bridge 返回嵌套 position: {latitude, longitude, altitude}
+    final pos = json['position'] as Map<String, dynamic>? ?? const {};
     return AircraftState(
       callsign: json['callsign'] ?? '',
-      position: Position.fromJson(json['position'] ?? {}),
-      heading: json['heading'] ?? 0,
-      groundSpeed: json['groundSpeed'] ?? 0,
+      position: Position.fromJson(pos),
+      heading: (json['heading'] ?? 0).toInt(),
+      groundSpeed: (json['groundSpeed'] ?? 0).toInt(),
       verticalSpeed: json['verticalSpeed'],
-      squawk: json['squawk'],
+      squawk: json['squawk'] ?? json['transponder'],
       status: json['status'],
       com1Frequency: json['com1Frequency'],
       com2Frequency: json['com2Frequency'],
       onGround: json['onGround'] ?? false,
-      timestamp: DateTime.parse(json['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.now(),
     );
   }
 

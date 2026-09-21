@@ -1,6 +1,6 @@
 {
-    "name": "vatsim_companion",
-    "short_name": "vatsim_companion",
+    "name": "swift_companion",
+    "short_name": "swift_companion",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

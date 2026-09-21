@@ -29,7 +29,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 REM Start Bridge Service
 echo [1/2] Starting Bridge Service...
-cd bridge-service\windows\VatsimBridge
+cd bridge-service\windows\SwiftBridge
 start "Swift Bridge" dotnet run --configuration Release
 timeout /t 3 /nobreak >nul
 echo Bridge running on http://localhost:5000

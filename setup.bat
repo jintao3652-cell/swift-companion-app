@@ -24,8 +24,8 @@ echo.
 
 REM Setup Bridge Service
 echo [1/2] Setting up Bridge Service...
-cd bridge-service\windows\VatsimBridge
-if not exist "VatsimBridge.sln" (
+cd bridge-service\windows\SwiftBridge
+if not exist "SwiftBridge.sln" (
     cd ..
 )
 
@@ -97,7 +97,7 @@ echo 1. Install Cloudflare Tunnel (optional^):
 echo    winget install --id Cloudflare.cloudflared
 echo.
 echo 2. Configure Bridge Service:
-echo    - Edit bridge-service\windows\VatsimBridge\appsettings.json
+echo    - Edit bridge-service\windows\SwiftBridge\appsettings.json
 echo    - Change JWT SecretKey to a random string
 echo.
 echo 3. Start services:

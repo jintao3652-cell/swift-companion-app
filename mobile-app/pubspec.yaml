@@ -1,9 +1,9 @@
 name: swift_companion
-description: VATSIM Companion App for swift
+description: swift Companion App
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -50,6 +50,15 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   hive_generator: ^2.0.0
   build_runner: ^2.4.6
+
+# shared_preferences_android 2.4.28 与 url_launcher_android 6.3.33 均使用 build.gradle.kts
+# （触发本机 Gradle Kotlin DSL accessors 60s 超时）且要求 AGP 8.13。
+# 以下本地副本已转为 Groovy + AGP 8.6.0。
+dependency_overrides:
+  shared_preferences_android:
+    path: third_party/shared_preferences_android
+  url_launcher_android:
+    path: third_party/url_launcher_android
 
 flutter:
   uses-material-design: true

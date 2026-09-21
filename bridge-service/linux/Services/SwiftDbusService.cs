@@ -67,7 +67,10 @@ public class SwiftDbusService
 
         try
         {
-            // Simulated mode
+            // TODO: Replace with actual D-Bus calls
+            // Example D-Bus paths for swift:
+            // /org/swift_project/swift/OwnAircraft - GetPosition(), GetCallsign(), etc.
+
             _connectedServer = "VATSIM";
             return new AircraftState
             {
@@ -77,12 +80,47 @@ public class SwiftDbusService
                 Altitude = 5000,
                 GroundSpeed = 250,
                 Heading = 90,
-                Server = _connectedServer
+                Server = _connectedServer,
+                Transponder = "2000",
+                TransponderMode = 3,
+                Com1Frequency = 118750,
+                Com2Frequency = 121500,
+                OnGround = false
             };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get aircraft state");
+            return null;
+        }
+    }
+
+    public async Task<List<AtcStation>?> GetAtcStationsAsync()
+    {
+        if (!_isConnected) return null;
+
+        try
+        {
+            // TODO: Replace with actual D-Bus calls
+            // Example D-Bus path:
+            // /org/swift_project/swift/AtcStations - GetStations()
+
+            return new List<AtcStation>
+            {
+                new AtcStation
+                {
+                    Callsign = "ZSSS_TWR",
+                    Name = "Shanghai Tower",
+                    Frequency = 118750,
+                    Latitude = 31.1434,
+                    Longitude = 121.8052,
+                    Range = 50.0
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get ATC stations");
             return null;
         }
     }
@@ -142,4 +180,19 @@ public class AircraftState
     public double GroundSpeed { get; set; }
     public double Heading { get; set; }
     public string? Server { get; set; }
+    public string? Transponder { get; set; }
+    public int? TransponderMode { get; set; }
+    public int? Com1Frequency { get; set; }
+    public int? Com2Frequency { get; set; }
+    public bool OnGround { get; set; }
+}
+
+public class AtcStation
+{
+    public string Callsign { get; set; } = "";
+    public string Name { get; set; } = "";
+    public int Frequency { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public double Range { get; set; }
 }

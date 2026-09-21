@@ -60,5 +60,18 @@ namespace SwiftBridge.Controllers
 
             return Ok(state);
         }
+
+        [HttpGet("atc")]
+        public async Task<IActionResult> GetAtcStations()
+        {
+            var stations = await _swiftService.GetAtcStationsAsync();
+
+            if (stations == null)
+            {
+                return NotFound(new { error = "swift not connected or no atc data" });
+            }
+
+            return Ok(stations);
+        }
     }
 }

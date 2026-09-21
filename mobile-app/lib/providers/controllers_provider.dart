@@ -65,21 +65,25 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
   }
 
   Future<void> fetchControllers() async {
-    if (state.isLoading) return; // 避免重复请求
+    if (state.isLoading) return;
 
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final response = await _apiService.getOnlineControllers();
+      final data = await _apiService.getOnlineControllers();
+      final controllers = data.map((e) => ControllerInfo.fromJson(e)).toList();
+
       state = ControllersState(
         isLoading: false,
-        located: response.located,
-        controllers: response.controllers,
+        located: controllers.isNotEmpty,
+        controllers: controllers,
         lastUpdate: DateTime.now(),
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
+        located: false,
+        controllers: [],
         error: e.toString(),
       );
     }

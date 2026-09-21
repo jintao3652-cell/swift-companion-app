@@ -12,11 +12,34 @@ class ControllerInfo {
   });
 
   factory ControllerInfo.fromJson(Map<String, dynamic> json) {
+    final frequency = json['frequency'];
+    String formattedFreq;
+    if (frequency is int) {
+      final freqStr = frequency.toString().padLeft(6, '0');
+      formattedFreq = '${freqStr.substring(0, 3)}.${freqStr.substring(3)}';
+    } else {
+      formattedFreq = frequency.toString();
+    }
+
+    String type = 'Unknown';
+    final callsign = (json['callsign'] as String).toUpperCase();
+    if (callsign.contains('_TWR')) {
+      type = 'Tower';
+    } else if (callsign.contains('_GND')) {
+      type = 'Ground';
+    } else if (callsign.contains('_DEL')) {
+      type = 'Delivery';
+    } else if (callsign.contains('_APP') || callsign.contains('_DEP')) {
+      type = 'Approach/Departure';
+    } else if (callsign.contains('_CTR')) {
+      type = 'Center';
+    }
+
     return ControllerInfo(
-      callsign: json['callsign'] as String,
-      frequency: json['frequency'] as String,
-      type: json['type'] as String,
-      atis: json['atis'] as String?,
+      callsign: callsign,
+      frequency: formattedFreq,
+      type: type,
+      atis: json['name'],
     );
   }
 

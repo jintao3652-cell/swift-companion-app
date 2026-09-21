@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>SwiftCompanion.Desktop</RootNamespace>
+    <AssemblyName>SwiftCompanion</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\SwiftCompanion.ico</ApplicationIcon>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\SwiftCompanion.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Host ASP.NET Core (the Bridge) in-process inside this WPF app. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\bridge-service\windows\SwiftBridge\SwiftBridge.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\installer\tunnel\cloudflared-windows-amd64.exe"
+          Link="tunnel\cloudflared.exe"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\installer\relay\frpc.exe"
+          Link="relay\frpc.exe"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
